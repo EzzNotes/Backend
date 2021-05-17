@@ -4,6 +4,8 @@ import sqlite3
 import os
 import logging
 
+from flask.helpers import flash
+
 root = os.path.dirname(os.path.relpath((__file__)))
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s:%(asctime)s:%(message)s')
 
@@ -27,7 +29,7 @@ def login():
         email = request.form.get('email')
         password = hashlib.md5(request.form.get('password').encode('utf-8')).hexdigest()
         
-        login = access_site(username, email, password)
+        login = access_site_login(username, email, password)
 
         return "LOGGED" if login else "FAILED"
 
@@ -36,7 +38,22 @@ def login():
 # ----------------------------------------------------- SignUP Page ---------------------------------------------------
 @Auth.route("/SignUp")
 def signUp():
-    return "Sign Up"
+    if request.method == 'GET':
+        return render_template("signup.html")
+    
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = hashlib.md5(request.form.get('password').encode('utf-8')).hexdigest()
+        password2 = hashlib.md5(request.form.get('password2').encode('utf-8')).hexdigest()
+
+        if password == password2 : 
+            signUP = access_site_signUP(username, email, password)
+        else: 
+            return render_template("signup.html")
+
+        return "Registerd" if signUP else "FAILED"
+
 
 
 # ------------------------------------------------------ Logout Page ---------------------------------------------------
@@ -45,15 +62,33 @@ def logout():
     return redirect(url_for("index.html"))
 
 
+# ----------------------------------------------- File Downloading And Uploading ------------------------------------------------------
+@Auth.route("/file_sending") # Il si scarica il file messo a disposizione 
+def file_download():
+
+
+
+    return None
+
+
+@Auth.route("/file_receiving") # Il server manda il file richiesto
+def file_upload():
+
+
+
+    return None
+
+
+
 
 # ------------------------------------------------------ Functions ------------------------------------------------------
 
-def access_site(username, email, password):
+def access_site_login(username, email, password):
     try:
-        con = sqlite3.connect(os.path.join(root,"Archivio.db"))
+        con = sqlite3.connect(os.path.join(root,"EzznotesLogin.db"))
         cur = con.cursor()
     except Exception as e :
-        lg.error(f"Connaction Error : {e}")
+        logging.error(f"Connaction Error : {e}")
         
     """
     result = cur.execute("SELECT password FROM user WHERE username = ?", username)
@@ -65,4 +100,25 @@ def access_site(username, email, password):
         return False
     
     """
+    return True
+
+def access_site_signUP(username, email, password):
+    try:
+        con = sqlite3.connect(os.path.join(root,"EzznotesLogin.db"))
+        cur = con.cursor()
+    except Exception as e :
+        logging.error(f"Connaction Error : {e}")
+        return False
+        
+    """
+    result = cur.execute("SELECT password FROM user WHERE username = ?", username)
+
+    if (result == password):
+        # Loged in
+        return True
+    else:
+        return False
+    
+    """
+    
     return True

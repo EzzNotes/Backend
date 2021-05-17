@@ -18,7 +18,5 @@ def access_site(username, email, password):
         # Loged in
         return True
     
-
-
     pass
 
