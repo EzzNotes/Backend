@@ -4,7 +4,7 @@ import sqlite3
 import os
 import logging
 
-from flask.helpers import flash
+#from flask.helpers import flash
 
 root = os.path.dirname(os.path.relpath((__file__)))
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s:%(asctime)s:%(message)s')
@@ -36,7 +36,7 @@ def login():
         
 
 # ----------------------------------------------------- SignUP Page ---------------------------------------------------
-@Auth.route("/SignUp")
+@Auth.route("/SignUp", methods=['GET', 'POST'])
 def signUp():
     if request.method == 'GET':
         return render_template("signup.html")
@@ -65,9 +65,9 @@ def logout():
 # ----------------------------------------------- File Downloading And Uploading ------------------------------------------------------
 @Auth.route("/file_sending") # Il si scarica il file messo a disposizione 
 def file_download():
+    
 
-
-
+    
     return None
 
 
@@ -85,40 +85,45 @@ def file_upload():
 
 def access_site_login(username, email, password):
     try:
-        con = sqlite3.connect(os.path.join(root,"EzznotesLogin.db"))
+        con = sqlite3.connect(os.path.join(root,"Ezznotes.db"))
         cur = con.cursor()
     except Exception as e :
         logging.error(f"Connaction Error : {e}")
         
-    """
-    result = cur.execute("SELECT password FROM user WHERE username = ?", username)
+    
+    result = cur.execute(f"SELECT Password FROM USERTABLE WHERE username = '{username}'")
+    result = cur.fetchone()
+    print (result[0])
 
-    if (result == password):
-        # Loged in
+    if (result[0] == password):
+        print(result[0])
         return True
     else:
         return False
     
-    """
-    return True
 
 def access_site_signUP(username, email, password):
     try:
-        con = sqlite3.connect(os.path.join(root,"EzznotesLogin.db"))
+        con = sqlite3.connect(os.path.join(root,"Ezznotes.db"))
         cur = con.cursor()
     except Exception as e :
         logging.error(f"Connaction Error : {e}")
         return False
-        
-    """
-    result = cur.execute("SELECT password FROM user WHERE username = ?", username)
 
-    if (result == password):
-        # Loged in
+    query = f"INSERT INTO USERTABLE VALUES('{username}','{password}','{email}');"
+    try :  
+        print(query)
+        result = cur.execute(query)
+        print(result.lastrowid)
+    except Exception as e :
+        print(e)
+    
+    if (result.lastrowid > 1):
+        print(username)
+        con.commit()
         return True
     else:
+        con.close()
         return False
     
-    """
-    
-    return True
+
