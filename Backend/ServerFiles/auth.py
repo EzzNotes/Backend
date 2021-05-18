@@ -1,16 +1,20 @@
-from flask import Flask, Blueprint, request, url_for, redirect, render_template, make_response
+from flask import Flask, Blueprint, app, request, url_for, redirect, render_template, make_response, send_from_directory, abort
 import hashlib
 import sqlite3
 import os
 import logging
+import zipfile
 
 #from flask.helpers import flash
 
 root = os.path.dirname(os.path.relpath((__file__)))
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s:%(asctime)s:%(message)s')
+DOWNLOAD_DIRECTORY = r"C:\Users\shekh\Desktop\EzzNotes\Backend\Backend\ServerFiles\static\files\Img"
+
 
 Auth = Blueprint("auth", __name__)
 
+#Auth.config["CLIENT_IMG"] = r"C:\Users\shekh\Desktop\EzzNotes\Backend\Backend\ServerFiles\static\files\Img"
 # --------------------------------------------------- Landing Page ----------------------------------------------------
 @Auth.route('/')
 def index():
@@ -63,9 +67,14 @@ def logout():
 
 
 # ----------------------------------------------- File Downloading And Uploading ------------------------------------------------------
-@Auth.route("/file_sending") # Il si scarica il file messo a disposizione 
-def file_download():
-    
+
+@Auth.route("/get-file/<string:img_name>") # Il si scarica il file messo a disposizione 
+def file_download(img_name):
+    try:
+        return send_from_directory(DOWNLOAD_DIRECTORY, img_name, as_attachment=True)
+    except FileNotFoundError:
+        abort(404, "File download")
+
 
     
     return None
