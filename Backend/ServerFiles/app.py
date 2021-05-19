@@ -12,15 +12,15 @@ def create_App():
     return app
 
 app = create_App()
-#app.config["CLIENT_IMG"] = r"C:\Users\shekh\Desktop\EzzNotes\Backend\Backend\ServerFiles\static\files\Img"
 
 root = os.path.dirname(os.path.relpath((__file__)))
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s:%(asctime)s:%(message)s')
-DOWNLOAD_DIRECTORY = r"C:\Users\shekh\Desktop\EzzNotes\Backend\Backend\ServerFiles\static\files\Img"
+DOWNLOAD_DIRECTORY_IMG = r"C:\Users\shekh\Desktop\EzzNotes\Backend\Backend\Files\Img"
+DOWNLOAD_DIRECTORY_PDF = r"C:\Users\shekh\Desktop\EzzNotes\Backend\Backend\Files\pdf"
+DOWNLOAD_DIRECTORY_PPTX = r"C:\Users\shekh\Desktop\EzzNotes\Backend\Backend\Files\pptx"
+DOWNLOAD_DIRECTORY_DOCS = r"C:\Users\shekh\Desktop\EzzNotes\Backend\Backend\Files\docs"
 
 
-
-#Auth.config["CLIENT_IMG"] = r"C:\Users\shekh\Desktop\EzzNotes\Backend\Backend\ServerFiles\static\files\Img"
 # --------------------------------------------------- Landing Page ----------------------------------------------------
 @app.route('/')
 def index():
@@ -31,15 +31,18 @@ def index():
 # ---------------------------------------------------- Login Page ----------------------------------------------------
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    
     if request.method == 'GET':
+        print("Hello!")
         return render_template("login.html")
 
     if request.method == 'POST':
+        print("Hello!")
         username = request.form.get('username')
         email = request.form.get('email')
         password = hashlib.md5(request.form.get('password').encode('utf-8')).hexdigest()
         
-        login = access_site_login(username, email, password)
+        login = access_site_login(username,email, password)
 
         return "LOGGED" if login else "FAILED"
 
@@ -77,25 +80,53 @@ def logout():
 @app.route("/get-file/<string:img_name>") # Il si scarica il file messo a disposizione 
 def file_download(img_name):
     try:
-        return send_from_directory(DOWNLOAD_DIRECTORY, img_name, as_attachment=False)
+        return send_from_directory(DOWNLOAD_DIRECTORY_IMG, img_name, as_attachment=True)
     except FileNotFoundError:
         abort(404, "File download")
 
 
-    
     return None
 
 
-@app.route("/file_receiving") # Il server manda il file richiesto
+@app.route("/file_receiving")
 def file_upload():
+    file = request.files['inputfile']
+
     
 
 
     return None
+
+@app.route("/search/<string:ricerca>")
+def search(ricerca):
+
+    ricercato =  search_in_files(ricerca)
+    return "TODO"
 
 
 
 # ------------------------------------------------------ Functions ------------------------------------------------------
+
+def search_in_files(ricerca):
+    try:
+        con = sqlite3.connect(os.path.join(root,"Ezznotes.db"))
+        cur = con.cursor()
+    except Exception as e :
+        logging.error(f"Connaction Error : {e}")
+    
+    query = f"SELECT fileName FROM Filelinks WHERE fileName like('{ricerca}')"
+    try :  
+        result = cur.execute(query)
+        result = result.fetchall()
+        print(result)
+    except Exception as e :
+        print(e)
+
+    return "Something"
+
+
+
+
 
 def access_site_login(username, email, password):
     try:
