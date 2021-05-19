@@ -1,13 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='style.css') }}">
-    <link rel="stylesheet" href="style.css">
-    <script></script>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='style.css') }}">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script>
+    $(document).ready(function () { 
+    $('#btnSearch').click(function () {
+    console.log($('#Search').val())
+
+    });
+    });
+  </script>
 </head>
 <body>
     <header>
@@ -31,22 +39,22 @@
         <a>CONTACT</a>
       </div> -->
       
-      
-      
-      <div class="container white">
-        <div class="wrap">
-          <div class="search">
-             <input type="text" class="searchTerm" placeholder="What are you looking for?">
-             <button type="submit" class="searchButton">
-               <i class="fa fa-search"></i>
-            </button>
-          </div>
-          </div>
-       </div>
-      </div>
+      <form action="{{ url_for('search.search') }}" method="get">
+        <div class="container white">
+          <div class="wrap">
+            <div class="search">
+              <input type="text" nome="search" id="search" class="searchTerm" placeholder="What are you looking for?">
+              <button id="btnSearch" type="submit" class="searchButton">
+                <i class="fa fa-search">Search</i>
+              </button>
+            </div>
+            </div>
+        </div>
+        </div>
+      </form>
       
       <footer>
-        <span>EvyatarDa(C) All rights Reserved</span>
+        <span>All rights Reserved</span>
       </footer>
 
       <script></script>

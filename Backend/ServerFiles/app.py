@@ -47,7 +47,6 @@ def login():
         return "LOGGED" if login else "FAILED"
 
         
-
 # ----------------------------------------------------- SignUP Page ---------------------------------------------------
 @app.route("/SignUp", methods=['GET', 'POST'])
 def signUp():
@@ -80,7 +79,7 @@ def logout():
 @app.route("/get-file/<string:img_name>") # Il si scarica il file messo a disposizione 
 def file_download(img_name):
     try:
-        return send_from_directory(DOWNLOAD_DIRECTORY_IMG, img_name, as_attachment=True)
+        return send_from_directory(DOWNLOAD_DIRECTORY_IMG, img_name, as_attachment=False)
     except FileNotFoundError:
         abort(404, "File download")
 
@@ -97,11 +96,16 @@ def file_upload():
 
     return None
 
-@app.route("/search/<string:ricerca>")
+@app.route("/search/<ricerca>")
 def search(ricerca):
+    if request.method == 'GET' :
+        #ricerca = request.args.get('search')
+        ricercato =  search_in_files(ricerca)
 
-    ricercato =  search_in_files(ricerca)
-    return "TODO"
+    return (ricercato)
+    #return render_template("table.html", lista = ricercato)
+
+
 
 
 
@@ -121,6 +125,9 @@ def search_in_files(ricerca):
         print(result)
     except Exception as e :
         print(e)
+    
+
+
 
     return "Something"
 
