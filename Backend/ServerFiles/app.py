@@ -44,7 +44,7 @@ def login():
         
         login = access_site_login(username,email, password)
 
-        return "LOGGED" if login else "FAILED"
+        return render_template("afterindex.html") if login else "FAILED"
 
         
 # ----------------------------------------------------- SignUP Page ---------------------------------------------------
@@ -64,14 +64,14 @@ def signUp():
         else: 
             return render_template("signup.html")
 
-        return "Registerd" if signUP else "FAILED"
+        return render_template("afterindex.html") if signUP else "FAILED"
 
 
 
 # ------------------------------------------------------ Logout Page ---------------------------------------------------
 @app.route("/logout")
 def logout():
-    return redirect(url_for("index.html"))
+    return redirect(url_for("index"))
 
 
 # ----------------------------------------------- File Downloading And Uploading ------------------------------------------------------
@@ -90,11 +90,12 @@ def file_download(img_name):
 @app.route("/file_receiving")
 def file_upload():
     file = request.files['inputfile']
+    document = FileField('Document', validators=[FileRequired(), FileAllowed(['xls', 'xlsx'], 'Excel Document only!')])
 
-    
+    print("Hello")
 
 
-    return None
+    return ""
 
 @app.route("/search/<ricerca>")
 def search(ricerca):
@@ -104,8 +105,6 @@ def search(ricerca):
 
     return (ricercato)
     #return render_template("table.html", lista = ricercato)
-
-
 
 
 
