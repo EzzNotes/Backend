@@ -5,25 +5,31 @@ import os
 import logging
 import zipfile
 
-#from flask.helpers import flash
+def create_App():
+    app = Flask(__name__)
+    app.config["SECURE_KEY"] = "lkjhgfdsa"
+
+    return app
+
+app = create_App()
+#app.config["CLIENT_IMG"] = r"C:\Users\shekh\Desktop\EzzNotes\Backend\Backend\ServerFiles\static\files\Img"
 
 root = os.path.dirname(os.path.relpath((__file__)))
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s:%(asctime)s:%(message)s')
 DOWNLOAD_DIRECTORY = r"C:\Users\shekh\Desktop\EzzNotes\Backend\Backend\ServerFiles\static\files\Img"
 
 
-Auth = Blueprint("auth", __name__)
 
 #Auth.config["CLIENT_IMG"] = r"C:\Users\shekh\Desktop\EzzNotes\Backend\Backend\ServerFiles\static\files\Img"
 # --------------------------------------------------- Landing Page ----------------------------------------------------
-@Auth.route('/')
+@app.route('/')
 def index():
     if request.method == 'GET':
         return render_template("index.html")
     
 
 # ---------------------------------------------------- Login Page ----------------------------------------------------
-@Auth.route("/login", methods=['GET', 'POST'])
+@app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
         return render_template("login.html")
@@ -40,7 +46,7 @@ def login():
         
 
 # ----------------------------------------------------- SignUP Page ---------------------------------------------------
-@Auth.route("/SignUp", methods=['GET', 'POST'])
+@app.route("/SignUp", methods=['GET', 'POST'])
 def signUp():
     if request.method == 'GET':
         return render_template("signup.html")
@@ -61,17 +67,17 @@ def signUp():
 
 
 # ------------------------------------------------------ Logout Page ---------------------------------------------------
-@Auth.route("/logout")
+@app.route("/logout")
 def logout():
     return redirect(url_for("index.html"))
 
 
 # ----------------------------------------------- File Downloading And Uploading ------------------------------------------------------
 
-@Auth.route("/get-file/<string:img_name>") # Il si scarica il file messo a disposizione 
+@app.route("/get-file/<string:img_name>") # Il si scarica il file messo a disposizione 
 def file_download(img_name):
     try:
-        return send_from_directory(DOWNLOAD_DIRECTORY, img_name, as_attachment=True)
+        return send_from_directory(DOWNLOAD_DIRECTORY, img_name, as_attachment=False)
     except FileNotFoundError:
         abort(404, "File download")
 
@@ -80,13 +86,12 @@ def file_download(img_name):
     return None
 
 
-@Auth.route("/file_receiving") # Il server manda il file richiesto
+@app.route("/file_receiving") # Il server manda il file richiesto
 def file_upload():
-
+    
 
 
     return None
-
 
 
 
@@ -134,5 +139,24 @@ def access_site_signUP(username, email, password):
     else:
         con.close()
         return False
+
+
+def getIMGpath(filename):
+
+
+
+    return None
+
+def getPDFpath(filename):
+
+    return None
+
+def getPPTXpath(filename):
+
+    return None
     
 
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
