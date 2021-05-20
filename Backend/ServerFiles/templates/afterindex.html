@@ -32,27 +32,55 @@
       </div> -->
       
       
-      <form action="/search/" method="get">
         <div class="container white">
           <div class="wrap">
             <div class="search">
               <input type="text" nome="search" id="search" class="searchTerm" placeholder="What are you looking for?">
-              <button id="btnSearch" type="submit" class="searchButton">
+              <button id="btnSearch" type="submit" class="searchButton btn-search">
                 <i class="fa fa-search">Search</i>
               </button>
               <div class="upload">
-                <button type="upload" action="/upload" class="uploadButton">Upload</button>
+                <button type="upload" id= "upload" action="/upload" class="uploadButton btn-search">Upload</button>
               </div>
             </div>
             </div>
         </div>
         </div>
-      </form>
-      
+
       <footer>
         <span>EvyatarDa(C) All rights Reserved</span>
       </footer>
+<script>
 
-      <script></script>
+        const url = new URL(window.location.href);
+        /*
+        const cercaFile = ()=>{
+          console.log(testo)
+        }*/
+        
+        const search = document.getElementsByClassName("btn-search"); 
+        console.log(search);
+        let array = [];
+        array.push(search[0])
+        array.push(search[1])
+        array.forEach((el)=>{
+          el.addEventListener("click" , ()=>{
+          const testo = document.getElementById("search").value;
+
+          console.log(testo); 
+          let stringa = "";
+          if(el.getAttribute("id") == "upload"){
+            stringa = "upload";
+          }else{
+            stringa = "search/" + testo;
+          }
+          window.location.href = url.origin + "/" + stringa;
+
+        })
+        })
+
+        
+
+      </script>
 </body>
 </html>
