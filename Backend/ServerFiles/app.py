@@ -1,17 +1,22 @@
-from flask import Flask, Blueprint, app, request, url_for, redirect, render_template, make_response, send_from_directory, abort
+from flask import Flask, Blueprint, app, request, url_for, redirect, render_template, make_response
+from flask import send_file, send_from_directory, safe_join, abort
 import hashlib
 import sqlite3
 import os
 import logging
 import zipfile
+from flask_dropzone import Dropzone
 
 def create_App():
     app = Flask(__name__)
     app.config["SECURE_KEY"] = "lkjhgfdsa"
 
+
     return app
 
 app = create_App()
+dropzone = Dropzone(app)
+
 
 root = os.path.dirname(os.path.relpath((__file__)))
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s:%(asctime)s:%(message)s')
@@ -76,27 +81,30 @@ def logout():
 
 # ----------------------------------------------- File Downloading And Uploading ------------------------------------------------------
 
-@app.route("/get-file/<string:img_name>") # Il si scarica il file messo a disposizione 
+@app.route("/get-file/<img_name>") # Il si scarica il file messo a disposizione 
 def file_download(img_name):
     try:
         return send_from_directory(DOWNLOAD_DIRECTORY_IMG, img_name, as_attachment=False)
     except FileNotFoundError:
-        abort(404, "File download")
+        abort(404)
 
 
     return None
 
 
-@app.route("/file_receiving")
-def file_upload():
-    file = request.files['inputfile']
-    document = FileField('Document', validators=[FileRequired(), FileAllowed(['xls', 'xlsx'], 'Excel Document only!')])
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'GET':
+        return render_template("upload.html")
 
-    print("Hello")
+    if request.method == 'POST':
+        f = request.files.get('file')
+        f.save(os.path.join('the/path/to/save', f.filename))
+
+    return 'upload template'
 
 
-    return ""
-
+    
 @app.route("/search/<ricerca>")
 def search(ricerca):
     if request.method == 'GET' :
