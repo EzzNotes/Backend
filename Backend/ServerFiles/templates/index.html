@@ -31,24 +31,31 @@
         <a>CONTACT</a>
       </div> -->
       
-      <form action="/search/" method="get">
         <div class="container white">
           <div class="wrap">
             <div class="search">
               <input type="text" nome="search" id="search" class="searchTerm" placeholder="What are you looking for?">
-              <button id="btnSearch" type="submit" class="searchButton">
+              <button id="btnSearch" type="submit" class="searchButton" onclick="cercaFile()">
                 <i class="fa fa-search">Search</i>
               </button>
             </div>
             </div>
         </div>
         </div>
-      </form>
       
       <footer>
         <span>All rights Reserved</span>
       </footer>
 
-      <script></script>
+      <script>
+
+        const url = new URL(window.location.href);
+        const cercaFile = ()=>{
+          const testo = document.getElementById("search").value;
+          console.log(testo)
+          window.location.href = url.origin + "/search/" + testo;
+        }
+        
+      </script>
 </body>
 </html>
