@@ -5,17 +5,21 @@ import sqlite3
 import os
 import logging
 import zipfile
-from flask_dropzone import Dropzone
+from flask_wtf.file import FileField
+from wtforms import SubmitField
+from flask_wtf import Form
+
+
+
 
 def create_App():
     app = Flask(__name__)
-    app.config["SECURE_KEY"] = "lkjhgfdsa"
+    app.config["SECRET_KEY"] = "lkjhgfdsa"
 
 
     return app
 
 app = create_App()
-dropzone = Dropzone(app)
 
 
 root = os.path.dirname(os.path.relpath((__file__)))
@@ -26,11 +30,21 @@ DOWNLOAD_DIRECTORY_PPTX = r"C:\Users\shekh\Desktop\EzzNotes\Backend\Backend\File
 DOWNLOAD_DIRECTORY_DOCS = r"C:\Users\shekh\Desktop\EzzNotes\Backend\Backend\Files\docs"
 
 
+app.config['PATH_IMG'] = DOWNLOAD_DIRECTORY_IMG
+
+
+
 # --------------------------------------------------- Landing Page ----------------------------------------------------
 @app.route('/')
 def index():
     if request.method == 'GET':
         return render_template("index.html")
+
+
+class MyFile(Form):
+    file = FileField()
+    submit = SubmitField("submit")
+
     
 
 # ---------------------------------------------------- Login Page ----------------------------------------------------
@@ -94,14 +108,16 @@ def file_download(img_name):
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    if request.method == 'GET':
-        return render_template("upload.html")
-
+    form = MyFile()
     if request.method == 'POST':
-        f = request.files.get('file')
-        f.save(os.path.join('the/path/to/save', f.filename))
+        if form.validate_on_submit():
+            filename = form.file.data.filename
+            form.file.data.save(DOWNLOAD_DIRECTORY_IMG + filename)
+            return render_template("afterindex.html")
 
-    return 'upload template'
+    
+    return render_template("fileUpload.html", form=form)
+
 
 
     
