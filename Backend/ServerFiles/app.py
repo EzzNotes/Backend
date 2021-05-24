@@ -124,10 +124,24 @@ def upload():
 @app.route("/search/<ricerca>")
 def search(ricerca):
     if request.method == 'GET' :
-        #ricerca = request.args.get('search')
-        ricercato =  search_in_files(ricerca)
+        try:
+            con = sqlite3.connect(os.path.join(root,"Ezznotes.db"))
+            cur = con.cursor()
+            query = f"SELECT fileName, path FROM Filelinks INNER JOIN filepaths ON filetype = idpath WHERE fileName LIKE '%{ricerca}%';"
+            result1 = con.execute(query)
+        except Exception as e :
+            logging.error(f"Connaction Error : {e}")
+        
+        result1 = result1.fetchall()
 
-    return (ricercato)
+        result = {}
+        for line in result1:
+            for index in range( len(line) -1):
+                result[line[index]] = line[index+1]
+
+        return render_template("fileslist.html", result = result)
+
+    return "NULL"
     #return render_template("table.html", lista = ricercato)
 
 
@@ -216,6 +230,18 @@ def getPPTXpath(filename):
 
     return None
     
+def returnFiles():
+    try:
+        con = sqlite3.connect(os.path.join(root,"Ezznotes.db"))
+        cur = con.cursor()
+    except Exception as e :
+        logging.error(f"Connaction Error : {e}")
+
+
+
+
+
+    return None
 
 
 
